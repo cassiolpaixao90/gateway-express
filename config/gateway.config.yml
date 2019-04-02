@@ -26,7 +26,7 @@ pipelines:
               audience: something
               subject: test
               secretOrPublicKey: ssssst
-              checkCredentialExistence: false
+              checkCredentialExistence: true
       - proxy: &httpBinConf
           - action:
               serviceEndpoint: backend
@@ -37,6 +37,6 @@ pipelines:
     policies:
       - jwt:
           action:
-            checkCredentialExistence: false
+            checkCredentialExistence: true
             secretOrPublicKeyFile: '/app/key.pem'
       - proxy: *httpBinConf

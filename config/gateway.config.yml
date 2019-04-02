@@ -1,32 +1,42 @@
 http:
-  port: 8080
-admin:
-  port: 9876
-  host: localhost
+  port: ${PORT}
 apiEndpoints:
-  api:
-    host: localhost
-    paths: '/ip'
+  internaljwt:
+    host: '*'
+    paths: ['/internaljwt', '/internaljwt/*']
+  externaljwt:
+    host: '*'
+    paths: ['/externaljwt', '/externaljwt/*']
 serviceEndpoints:
-  httpbin:
-    url: 'https://httpbin.org'
+  backend:
+    url: 'http://httpbin.org/'
 policies:
-  - basic-auth
-  - cors
-  - expression
-  - key-auth
-  - log
-  - oauth2
   - proxy
-  - rate-limit
+  - jwt
+  - oauth2
 pipelines:
-  default:
+  internaljwt:
     apiEndpoints:
-      - api
+      - internaljwt
     policies:
-    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
-    # - key-auth:
-      - proxy:
+      - oauth2:
+          action:
+            jwt:
+              issuer: express-gateway
+              audience: something
+              subject: test
+              secretOrPublicKey: ssssst
+              checkCredentialExistence: false
+      - proxy: &httpBinConf
           - action:
-              serviceEndpoint: httpbin 
+              serviceEndpoint: backend
               changeOrigin: true
+  externaljwt:
+    apiEndpoints:
+      - externaljwt
+    policies:
+      - jwt:
+          action:
+            checkCredentialExistence: false
+            secretOrPublicKeyFile: '/app/key.pem'
+      - proxy: *httpBinConf

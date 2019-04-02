@@ -6,6 +6,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "dependencies": {
-    "express-gateway": "^1.16.2"
+    "express-gateway": "^1.16.2",
+    "console.table": "^0.10.0"
   }
 }
